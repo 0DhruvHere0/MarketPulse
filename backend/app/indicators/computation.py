@@ -34,10 +34,36 @@ def compute_stochastic(high: pd.Series, low: pd.Series, close: pd.Series) -> tup
     d = k.rolling(STOCH_D_PERIOD).mean()
     return k, d
 def compute_adx(high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
-    adx_df = ta.adx(high, low, close, length=ADX_PERIOD)
-    if adx_df is not None and f'ADX_{ADX_PERIOD}' in adx_df.columns:
-        return adx_df[f'ADX_{ADX_PERIOD}']
-    return pd.Series(index=close.index, dtype=float)
+    # Wilder's ADX (same smoothing as RSI: alpha=1/period)
+    period = ADX_PERIOD
+    # True Range
+    prev_close = close.shift(1)
+    tr = pd.concat([
+        high - low,
+        (high - prev_close).abs(),
+        (low - prev_close).abs()
+    ], axis=1).max(axis=1)
+    # +DM and -DM
+    plus_dm = high.diff()
+    minus_dm = -low.diff()
+    plus_dm = plus_dm.where(plus_dm > minus_dm, 0.0)
+    minus_dm = minus_dm.where(minus_dm > plus_dm, 0.0)
+    # Wilder's smoothing (EMA with alpha=1/period)
+    alpha = 1 / period
+    alpha_rec = 1 - alpha
+    # Initialize smoothed values with simple mean of first 'period' TR
+    # Then use recursive EMA
+    tr_smooth = tr.ewm(alpha=alpha, adjust=False).mean()
+    plus_dm_smooth = plus_dm.ewm(alpha=alpha, adjust=False).mean()
+    minus_dm_smooth = minus_dm.ewm(alpha=alpha, adjust=False).mean()
+    # +DI and -DI
+    plus_di = 100 * plus_dm_smooth / tr_smooth
+    minus_di = 100 * minus_dm_smooth / tr_smooth
+    # DX
+    dx = 100 * (plus_di - minus_di).abs() / (plus_di + minus_di)
+    # ADX (smoothed DX)
+    adx = dx.ewm(alpha=alpha, adjust=False).mean()
+    return adx
 def compute_emas(close: pd.Series) -> tuple[pd.Series, pd.Series]:
     ema50 = close.ewm(span=EMA_SHORT, adjust=False).mean()
     ema200 = close.ewm(span=EMA_LONG, adjust=False).mean()
