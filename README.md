@@ -2,31 +2,51 @@
 
 A web app for technical analysis of stocks and indices from global exchanges. Search for any symbol, get real-time indicator computations, individual signal scores, and an aggregated Bullish/Bearish/Neutral verdict.
 
-**No price prediction, no ML, no forecasting.** Purely deterministic rule-based technical analysis.
+**No price prediction, no ML, no forecasting.** Purely deterministic rule-based technical analysis. Indicators are lagging calculations with no predictive power. Not investment advice.
 
 ---
 
 ## Features
 
 - **Global Symbol Search** — Autocomplete across 20+ exchanges (NASDAQ, NYSE, NSE, BSE, LSE, TSE, HKEX, TSX, XETRA, ASX, and more) plus major indices (S&P 500, Nifty 50, FTSE 100, Nikkei 225, etc.)
-- **8 Technical Indicators** — RSI, MACD, Stochastic, ADX, EMA50/EMA200, Bollinger Bands, Pivot Points, VWAP
+- **18 Technical Indicators** — RSI, MACD, Stochastic, CCI, Williams %R, MFI, Aroon, ROC, TRIX, CMF (21-period), CHOP, Stochastic RSI, EMA50/EMA200, Bollinger Bands, Pivot Points, VWAP
 - **Rule-Based Scoring** — Each indicator maps to a [-1, +1] score with Bullish/Bearish/Neutral label
 - **Weighted Aggregation** — Category weights (Trend 40%, Momentum 35%, Volatility 25%) with ADX trend-strength gating
-- **Clean Dashboard** — Indicator cards with values, interpretations, and visual verdict gauge
+- **18-Indicator Scoring Engine** — analyze, backtest, and forecast endpoints all use the same scoring pipeline
+- **CHOP Regime Gate** — CHOP >61.8 dampens TREND weight ×0.5, shifts to MOMENTUM; stacked on ADX gate
+- **CMF 21-period** — Money Flow Index money-flow volume oscillator
+- **Verdict Bands** — BUY ≥56, SELL ≤44 across 5 tickers (AAPL, MSFT, SBIN.NS, RELIANCE.NS, ^NSEI)
+- **Backtest** — Walk-forward replay over 2y history with equity curve
+- **Forecast** — 1σ probability ranges, probability of rise, best/worst historical extremes
+- **Responsive/Fullscreen UI** — Fluid layout, no max-width caps, indicator cards wide, 2×2 forecast grid on xl, full-bleed header/footer
 
 ---
 
 ## Architecture
 
 ```
-Frontend (React) → API → Stage 1: Data Fetch (yfinance)
+Frontend (React, Vite) → FastAPI → Stage 1: Data Fetch (yfinance)
                         → Stage 2: Indicator Computation (pure functions)
                         → Stage 3: Signal Scoring (pure functions)
-                        → Stage 4: Aggregation (pure function)
+                        → Stage 4: Aggregation (pure function with CHOP/ADX regime gates)
                         → JSON Response
 ```
 
 All computation stages (2-4) are pure functions with no side effects — independently unit-testable.
+
+---
+
+## Screenshots
+
+| Page | Location |
+|------|----------|
+| Home / Search | `frontend/public/screenshots/home-search.png` |
+| Analyze Page | `frontend/public/screenshots/analyze-page.png` |
+| Indicator Cards | `frontend/public/screenshots/indicator-cards.png` |
+| Backtest View | `frontend/public/screenshots/backtest-view.png` |
+| Forecast View | `frontend/public/screenshots/forecast-view.png` |
+
+*Add screenshot images to `frontend/public/screenshots/` directory.*
 
 ---
 
@@ -81,6 +101,7 @@ Frontend runs at `http://localhost:5173`
 Search symbols across global exchanges.
 
 **Response:**
+
 ```json
 {
   "results": [
@@ -96,6 +117,7 @@ Search symbols across global exchanges.
 Full technical analysis for a ticker.
 
 **Response:**
+
 ```json
 {
   "ticker": "SBIN.NS",
@@ -207,6 +229,7 @@ Labelled as approximation in UI.
 ## Aggregation Logic
 
 ### Category Weights (Base)
+
 | Category | Indicators | Weight |
 |----------|------------|--------|
 | TREND | MACD, EMA Signal | 0.40 |
@@ -233,6 +256,7 @@ bearish_pct = 100 - bullish_pct
 ```
 
 ### Verdict Bands
+
 | Bullish % | Verdict |
 |-----------|---------|
 | > 65 | BUY |
@@ -244,12 +268,14 @@ bearish_pct = 100 - bullish_pct
 ## Design Rationale (Required by Spec)
 
 ### Weighting Scheme (0.40 / 0.35 / 0.25)
+
 Deliberate design choice, not arbitrary defaults:
 - **Trend (40%)**: MACD + EMA crossover capture primary trend direction — highest weight because trend-following has the strongest theoretical basis in technical analysis.
 - **Momentum (35%)**: RSI + Stochastic measure overbought/oversold and momentum shifts — slightly lower because momentum signals are mean-reverting and less reliable in strong trends.
 - **Volatility (25%)**: Bollinger Bands alone — lowest weight because %B is a mean-reversion tool that fails in trending markets (hence the ADX dampening).
 
 ### ADX Gating Logic
+
 - **Weak trend (ADX < 20)**: Market is ranging. Trend-following indicators (MACD, EMA) produce whipsaws → reduce TREND weight by 50%, shift to MOMENTUM (mean-reversion works better in ranges).
 - **Strong trend (ADX > 25)**: Trend-following is reliable → boost TREND weight by 15%. Bollinger band touches are continuation signals, not reversals → dampen VOLATILITY score by 50%.
 - **Moderate**: Base weights.
@@ -257,9 +283,11 @@ Deliberate design choice, not arbitrary defaults:
 This is a *design choice with explicit reasoning*, not an arbitrary default.
 
 ### VWAP Approximation
+
 VWAP is computed over a 20-day rolling window on daily bars, **not** true intraday session VWAP. It is labeled `is_approximation: true` in the API and "(approx.)" in the UI. True VWAP requires intraday data with session reset.
 
 ### Supported Exchanges (v1)
+
 | Exchange | Suffix | Example |
 |----------|--------|---------|
 | NASDAQ/NYSE (US) | (none) | AAPL, MSFT |
@@ -280,10 +308,12 @@ VWAP is computed over a 20-day rolling window on daily bars, **not** true intrad
 | B3 (Brazil) | .SA | PETR4.SA |
 | KRX (Korea) | .KS | 005930.KS |
 | TWSE (Taiwan) | .TW | 2330.TW |
+| Shanghai Composite | 000001.SS |
 
 Symbol search uses yfinance's unofficial `yf.Search()` endpoint (primary) with a bundled fallback list of ~30 major tickers. The live endpoint is reverse-engineered and may change or rate-limit without notice.
 
 ### Supported Indices (bundled locally)
+
 | Index | Symbol |
 |-------|--------|
 | S&P 500 | ^GSPC |
@@ -316,23 +346,27 @@ MarketPulse/
 ├── backend/
 │   ├── app/
 │   │   ├── api/              # FastAPI routes
-│   │   ├── aggregation/      # Stage 4: weighted aggregation + ADX gating
+│   │   ├── aggregation/      # Stage 4: weighted aggregation + ADX/CHOP gating
 │   │   ├── constants.py      # All periods, weights, thresholds
 │   │   ├── data_fetch/       # Stage 1: yfinance wrapper + validation
-│   │   ├── indicators/       # Stage 2: 8 pure computation functions
-│   │   ├── scoring/          # Stage 3: 7 pure scoring functions
+│   │   ├── indicators/       # Stage 2: 18 pure computation functions
+│   │   ├── scoring/          # Stage 3: 18 pure scoring functions
 │   │   ├── search/           # Symbol search (live + fallback)
-│   │   └── main.py           # FastAPI app + /api/search, /api/analyze
+│   │   └── main.py           # FastAPI app + /api/search, /api/analyze, /api/backtest, /api/forecast
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── SearchBox.jsx      # Autocomplete with live search
-│   │   │   └── IndicatorCards.jsx # Verdict gauge + indicator grid
-│   │   ├── App.jsx                # Main dashboard
+│   │   │   ├── IndicatorCards.jsx # Verdict gauge + indicator grid
+│   │   │   ├── BacktestPanel.jsx  # Walk-forward backtest view
+│   │   │   └── ForecastPanel.jsx  # Forecast 1σ grid view
+│   │   ├── App.jsx                # Main dashboard, layout, views
 │   │   └── main.jsx
 │   └── package.json
-└── README.md
+├── .gitignore
+├── README.md
+└── start.sh
 ```
 
 ---
@@ -340,6 +374,7 @@ MarketPulse/
 ## Development
 
 ### Run Tests
+
 ```bash
 # Backend unit tests
 cd backend
@@ -358,11 +393,13 @@ npm run build  # TypeScript/type check
 ```
 
 ### Configuration
+
 Edit `backend/app/constants.py` to adjust:
-- Indicator periods (RSI, MACD, Stochastic, ADX, EMA, Bollinger, VWAP)
+- Indicator periods (RSI, MACD, Stochastic, ADX, EMA, Bollinger, VWAP, CMF, CHOP)
 - Category weights and ADX thresholds
 - Verdict bands (BUY/HOLD/SELL)
 - Exchange suffix mapping
+- CHOP regime gate thresholds
 
 ---
 
