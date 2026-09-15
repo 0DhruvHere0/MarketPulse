@@ -4,7 +4,7 @@ import { HeaderCard, VerdictGauge, IndicatorCard } from './components/IndicatorC
 import { SimulationView } from './components/ForecastPanel';
 import { DEITY_MAP } from './deities';
 import { RefreshCw, TrendingUp, TrendingDown } from 'lucide-react';
-const API_BASE = 'http://localhost:8001/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8001/api';
 function fmt(val, decimals = 2) {
   if (val === null || val === undefined) return '—';
   return typeof val === 'number' ? val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : val;

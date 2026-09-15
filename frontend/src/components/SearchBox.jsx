@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Loader2, X } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8001/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8001/api';
 
 export function SearchBox({ onSelect, placeholder = 'ENTER TICKER / COMPANY  —  e.g. AAPL, SBIN, ^NSEI' }) {
   const [query, setQuery] = useState('');
