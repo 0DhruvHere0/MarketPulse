@@ -193,7 +193,7 @@ export default function App() {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [expandedCards, setExpandedCards] = useState(new Set(['rsi', 'macd']));
+  const [expandedCards, setExpandedCards] = useState(new Set());
   const handleSymbolSelect = async (symbol) => {
     setSelectedSymbol(symbol);
     setAnalysis(null);

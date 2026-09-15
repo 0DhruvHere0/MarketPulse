@@ -1,0 +1,36 @@
+# See https://github.com/github/gitignore/blob/main/Node.gitignore
+node_modules/
+dist/
+build/
+*.tgz
+
+# See https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
+*.suo
+*.user
+*.sln
+*.pidb
+*.csproj
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg
+venv/
+.env/
+
+# Frontend
+/frontend/dist/
+/frontend/build/
+/frontend/.next/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
