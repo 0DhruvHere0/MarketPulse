@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import pandas_ta as ta
 from backend.app.constants import (
     RSI_PERIOD, MACD_FAST, MACD_SLOW, MACD_SIGNAL,
     STOCH_K_PERIOD, STOCH_D_PERIOD, STOCH_SMOOTH,
