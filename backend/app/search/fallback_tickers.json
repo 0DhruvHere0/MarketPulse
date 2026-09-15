@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Apple Inc.",
+    "exchange": "NASDAQ",
+    "ticker": "AAPL"
+  },
+  {
+    "name": "Microsoft Corporation",
+    "exchange": "NASDAQ",
+    "ticker": "MSFT"
+  },
+  {
+    "name": "Amazon.com Inc.",
+    "exchange": "NASDAQ",
+    "ticker": "AMZN"
+  },
+  {
+    "name": "Alphabet Inc.",
+    "exchange": "NASDAQ",
+    "ticker": "GOOGL"
+  },
+  {
+    "name": "Meta Platforms Inc.",
+    "exchange": "NASDAQ",
+    "ticker": "META"
+  },
+  {
+    "name": "Tesla Inc.",
+    "exchange": "NASDAQ",
+    "ticker": "TSLA"
+  },
+  {
+    "name": "NVIDIA Corporation",
+    "exchange": "NASDAQ",
+    "ticker": "NVDA"
+  },
+  {
+    "name": "Berkshire Hathaway Inc.",
+    "exchange": "NYSE",
+    "ticker": "BRK.B"
+  },
+  {
+    "name": "JPMorgan Chase & Co.",
+    "exchange": "NYSE",
+    "ticker": "JPM"
+  },
+  {
+    "name": "Johnson & Johnson",
+    "exchange": "NYSE",
+    "ticker": "JNJ"
+  },
+  {
+    "name": "State Bank of India",
+    "exchange": "NSE",
+    "ticker": "SBIN.NS"
+  },
+  {
+    "name": "State Bank of India",
+    "exchange": "BSE",
+    "ticker": "500112.BO"
+  },
+  {
+    "name": "Reliance Industries Ltd.",
+    "exchange": "NSE",
+    "ticker": "RELIANCE.NS"
+  },
+  {
+    "name": "HDFC Bank Ltd.",
+    "exchange": "NSE",
+    "ticker": "HDFCBANK.NS"
+  },
+  {
+    "name": "Infosys Ltd.",
+    "exchange": "NSE",
+    "ticker": "INFY.NS"
+  },
+  {
+    "name": "TCS Ltd.",
+    "exchange": "NSE",
+    "ticker": "TCS.NS"
+  },
+  {
+    "name": "Vodafone Group Plc",
+    "exchange": "LSE",
+    "ticker": "VOD.L"
+  },
+  {
+    "name": "Toyota Motor Corp",
+    "exchange": "TSE",
+    "ticker": "7203.T"
+  },
+  {
+    "name": "Sony Group Corp",
+    "exchange": "TSE",
+    "ticker": "6758.T"
+  },
+  {
+    "name": "Tencent Holdings Ltd.",
+    "exchange": "HKEX",
+    "ticker": "0700.HK"
+  },
+  {
+    "name": "Shopify Inc.",
+    "exchange": "TSX",
+    "ticker": "SHOP.TO"
+  },
+  {
+    "name": "SAP SE",
+    "exchange": "XETRA",
+    "ticker": "SAP.DE"
+  },
+  {
+    "name": "BHP Group Ltd.",
+    "exchange": "ASX",
+    "ticker": "BHP.AX"
+  },
+  {
+    "name": "DBS Group Holdings",
+    "exchange": "SGX",
+    "ticker": "D05.SI"
+  },
+  {
+    "name": "Airbus SE",
+    "exchange": "EURONEXT",
+    "ticker": "AIR.PA"
+  },
+  {
+    "name": "Nestle SA",
+    "exchange": "SIX",
+    "ticker": "NESN.SW"
+  },
+  {
+    "name": "Iberdrola SA",
+    "exchange": "BME",
+    "ticker": "IBE.MC"
+  },
+  {
+    "name": "Ericsson AB",
+    "exchange": "OMX",
+    "ticker": "ERIC-B.ST"
+  },
+  {
+    "name": "Naspers Ltd.",
+    "exchange": "JSE",
+    "ticker": "NPN.JO"
+  },
+  {
+    "name": "Petrobras",
+    "exchange": "BMF",
+    "ticker": "PETR4.SA"
+  },
+  {
+    "name": "Samsung Electronics",
+    "exchange": "KRX",
+    "ticker": "005930.KS"
+  },
+  {
+    "name": "TSMC",
+    "exchange": "TWSE",
+    "ticker": "2330.TW"
+  }
+]
